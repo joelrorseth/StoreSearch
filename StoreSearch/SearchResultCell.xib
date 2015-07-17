@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SearchResultCell" id="Om6-sI-cLX" customClass="SearchResultCell" customModule="StoreSearch" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="80"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Om6-sI-cLX" id="ObY-Va-cTr">
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Placeholder" translatesAutoresizingMaskIntoConstraints="NO" id="601-f2-YDE">
+                        <rect key="frame" x="15" y="10" width="60" height="60"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="60" id="7Ul-k1-Hji"/>
+                            <constraint firstAttribute="width" constant="60" id="PrZ-s2-L7R"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fu0-xg-SVB">
+                        <rect key="frame" x="90" y="15" width="222" height="22"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Artist Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lkj-xF-JOk">
+                        <rect key="frame" x="90" y="44" width="222" height="18"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.5" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="fu0-xg-SVB" firstAttribute="top" secondItem="ObY-Va-cTr" secondAttribute="top" constant="15" id="5Dh-gd-2Qu"/>
+                    <constraint firstItem="601-f2-YDE" firstAttribute="top" secondItem="ObY-Va-cTr" secondAttribute="top" constant="10" id="7It-dL-AF1"/>
+                    <constraint firstItem="fu0-xg-SVB" firstAttribute="leading" secondItem="601-f2-YDE" secondAttribute="trailing" constant="15" id="UW9-KW-T8W"/>
+                    <constraint firstAttribute="trailing" secondItem="Lkj-xF-JOk" secondAttribute="trailing" constant="8" id="ZUt-NL-aWh"/>
+                    <constraint firstItem="Lkj-xF-JOk" firstAttribute="leading" secondItem="601-f2-YDE" secondAttribute="trailing" constant="15" id="aIz-cn-7ZM"/>
+                    <constraint firstAttribute="bottom" secondItem="Lkj-xF-JOk" secondAttribute="bottom" constant="17" id="lw9-hm-V56"/>
+                    <constraint firstItem="601-f2-YDE" firstAttribute="leading" secondItem="ObY-Va-cTr" secondAttribute="leading" constant="15" id="nWT-Nu-pKm"/>
+                    <constraint firstAttribute="trailing" secondItem="fu0-xg-SVB" secondAttribute="trailing" constant="8" id="zxh-8k-rft"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="artistNameLabel" destination="Lkj-xF-JOk" id="JGY-0O-oNS"/>
+                <outlet property="artworkImageView" destination="601-f2-YDE" id="ptN-Fo-vu1"/>
+                <outlet property="nameLabel" destination="fu0-xg-SVB" id="xne-sj-KLk"/>
+            </connections>
+            <point key="canvasLocation" x="628" y="277"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="Placeholder" width="60" height="60"/>
+    </resources>
+</document>

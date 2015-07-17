@@ -10,34 +10,58 @@ import UIKit
 
 class SearchViewController: UIViewController {
     
+    struct TableViewCellIdentifiers {
+        static let searchResultCell = "SearchResultCell"
+        static let nothingFoundCell = "NothingFoundCell"
+    }
+    
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     
     var searchResults = [SearchResult]()
     var hasSearched = false
     
-    //=========================================================================================
-    // MARK: - View Controller
-    //=========================================================================================
+  
+    
+    
+    //*****************************************************************************************
+    //***************************************************************** MARK: - View Controller
+    //*****************************************************************************************
 
+    //=========================================================================================
+    //=========================================================================================
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.contentInset = UIEdgeInsets(top: 64, left: 0, bottom: 0, right: 0)
+        tableView.rowHeight = 80
+        
+        // Register the nib cell
+        var cellNib = UINib(nibName: TableViewCellIdentifiers.searchResultCell, bundle: nil)
+        tableView.registerNib(cellNib, forCellReuseIdentifier: TableViewCellIdentifiers.searchResultCell)
+        
+        cellNib = UINib(nibName: TableViewCellIdentifiers.nothingFoundCell, bundle: nil)
+        tableView.registerNib(cellNib, forCellReuseIdentifier: TableViewCellIdentifiers.nothingFoundCell)
     }
     
+    //=========================================================================================
+    //=========================================================================================
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
 }
 
-//=========================================================================================
-// MARK: - UISearchBarDelegate
-//=========================================================================================
+
+
+
+//*****************************************************************************************
+//************************************************************* MARK: - UISearchBarDelegate
+//*****************************************************************************************
 extension SearchViewController: UISearchBarDelegate {
     
 
-    //*************************************************************************************
+    //=========================================================================================
+    //=========================================================================================
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
         searchResults = [SearchResult]()
@@ -55,18 +79,24 @@ extension SearchViewController: UISearchBarDelegate {
         tableView.reloadData()
     }
     
+    //=========================================================================================
+    //=========================================================================================
     func positionForBar(bar: UIBarPositioning) -> UIBarPosition {
         return .TopAttached
     }
 }
 
 
-//=========================================================================================
-// MARK: - UITableViewDataSource
-//=========================================================================================
+
+
+
+//*****************************************************************************************
+//*********************************************************** MARK: - UITableViewDataSource
+//*****************************************************************************************
 extension SearchViewController: UITableViewDataSource {
     
-    //*************************************************************************************
+    //=========================================================================================
+    //=========================================================================================
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if !hasSearched {
             return 0
@@ -77,41 +107,42 @@ extension SearchViewController: UITableViewDataSource {
         }
     }
     
-    //*************************************************************************************
+    //=========================================================================================
+    //=========================================================================================
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cellIdentifier = "SearchResultCell"
-        var cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as! UITableViewCell!
-        
-        if cell == nil {
-            cell = UITableViewCell(style: .Subtitle, reuseIdentifier: cellIdentifier)
-        }
         
         if searchResults.count == 0 {
-            cell.textLabel!.text = "Nothing Found"
-            cell.detailTextLabel!.text = ""
+            return tableView.dequeueReusableCellWithIdentifier(TableViewCellIdentifiers.nothingFoundCell, forIndexPath: indexPath) as! UITableViewCell
         } else {
+            let cell = tableView.dequeueReusableCellWithIdentifier(TableViewCellIdentifiers.searchResultCell, forIndexPath: indexPath) as! SearchResultCell
             
             let searchResult = searchResults[indexPath.row]
-            cell.textLabel!.text = searchResult.name
-            cell.detailTextLabel!.text = searchResult.artistName
+            cell.nameLabel.text = searchResult.name
+            cell.artistNameLabel.text = searchResult.artistName
+            
+            return cell
         }
-        return cell
     }
 }
 
 
-//=========================================================================================
-// MARK: - UITableViewDelegate
-//=========================================================================================
+
+
+
+//*****************************************************************************************
+//************************************************************* MARK: - UITableViewDelegate
+//*****************************************************************************************
 extension SearchViewController: UITableViewDelegate {
     
-    //*************************************************************************************
+    //=========================================================================================
+    //=========================================================================================
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
     }
     
-    //*************************************************************************************
+    //=========================================================================================
     // Make sure you can only select rows with results
+    //=========================================================================================
     func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
         if searchResults.count == 0 {
             return nil
