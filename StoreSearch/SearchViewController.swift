@@ -22,6 +22,7 @@ class SearchViewController: UIViewController {
     var searchResults = [SearchResult]()
     var hasSearched = false
     var isLoading = false
+    var dataTask: NSURLSessionDataTask?
   
     
     
@@ -263,6 +264,7 @@ extension SearchViewController: UISearchBarDelegate {
         if !searchBar.text.isEmpty {
             searchBar.resignFirstResponder()
             
+            dataTask?.cancel() // Reset if needed
             isLoading = true
             tableView.reloadData()
             
@@ -273,7 +275,7 @@ extension SearchViewController: UISearchBarDelegate {
             let session = NSURLSession.sharedSession()
             
             // Create data task for sending HTTP GET requests to the server at 'url'
-            let dataTask = session.dataTaskWithURL(url, completionHandler: {
+            dataTask = session.dataTaskWithURL(url, completionHandler: {
                 data, response, error in
                 
                 // Quck way to check if completionHandler is performing on main thread
@@ -281,6 +283,8 @@ extension SearchViewController: UISearchBarDelegate {
                 
                 if let error = error {
                     println("Failure! \(error)")
+                    if error.code == -999 { return }
+                    
                 } else if let httpResponse = response as? NSHTTPURLResponse {
                     if httpResponse.statusCode == 200 {
                         
@@ -311,7 +315,7 @@ extension SearchViewController: UISearchBarDelegate {
             })
             
             // Send the request to the server (automatically on background thread)
-            dataTask.resume()
+            dataTask?.resume()
         }
     }
     
