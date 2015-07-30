@@ -13,6 +13,7 @@ class SearchViewController: UIViewController {
     struct TableViewCellIdentifiers {
         static let searchResultCell = "SearchResultCell"
         static let nothingFoundCell = "NothingFoundCell"
+        static let loadingCell = "Loading Cell"
     }
     
     @IBOutlet weak var searchBar: UISearchBar!
@@ -20,7 +21,7 @@ class SearchViewController: UIViewController {
     
     var searchResults = [SearchResult]()
     var hasSearched = false
-    
+    var isLoading = false
   
     
     
@@ -40,6 +41,9 @@ class SearchViewController: UIViewController {
         
         cellNib = UINib(nibName: TableViewCellIdentifiers.nothingFoundCell, bundle: nil)
         tableView.registerNib(cellNib, forCellReuseIdentifier: TableViewCellIdentifiers.nothingFoundCell)
+        
+        cellNib = UINib(nibName: TableViewCellIdentifiers.loadingCell, bundle: nil)
+        tableView.registerNib(cellNib, forCellReuseIdentifier: TableViewCellIdentifiers.loadingCell)
         
         // Allow keyboard to appear when app starts
         searchBar.becomeFirstResponder()
@@ -271,37 +275,42 @@ extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
         if !searchBar.text.isEmpty {
             searchBar.resignFirstResponder()
+            
+            isLoading = true
+            tableView.reloadData()
+            
             hasSearched = true
             searchResults = [SearchResult]()
             
-            let url = urlWithSearchText(searchBar.text)
-            println("URL: '\(url)'")
+            // Get a reference to the queue
+            let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
             
-            if let jsonString = performStoreRequestWithURL(url) {
-                //println("Recieved JSON string '\(jsonString)'")
+            /* Dispatch a closure on the queue. All the code in the closure will be put on the 
+            queue and executed asynchronously in the background. After scheduling this closure, 
+            the main thread is free to continue (it is no longer blocked) */
+            dispatch_async(queue) {
                 
-                if let dictionary = parseJSON(jsonString) {
-                    println("Dictionary \(dictionary)")
-                    
-                    searchResults = parseDictionary(dictionary)
-                    
-//                     Method 1
-//                    searchResults.sort({ result1, result2 in
-//                        return result1.name.localizedStandardCompare(result2.name) == NSComparisonResult.OrderedAscending
-//                    })
-//
-//                     Method 2
-//                    searchResults.sort { $0.name.localizedStandardCompare($1.name) == NSComparisonResult.OrderedAscending }
-                    
-                    // Method 3
-                    searchResults.sort(<)
-                    
-                    tableView.reloadData()
-                    return
+                let url = self.urlWithSearchText(searchBar.text)
+                
+                if let jsonString = self.performStoreRequestWithURL(url) {
+                    if let dictionary = self.parseJSON(jsonString) {
+                        
+                        self.searchResults = self.parseDictionary(dictionary)
+                        self.searchResults.sort(<)
+                        
+                        // UIKit requires UI code to be performed on main thread / queue
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self.isLoading = false
+                            self.tableView.reloadData()
+                        }
+                        return
+                    }
+                }
+                // UIAlertController must be performed using main thread / queue
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.showNetworkError()
                 }
             }
-            
-            showNetworkError()
         }
     }
     
@@ -323,7 +332,9 @@ extension SearchViewController: UITableViewDataSource {
     //=========================================================================================
     //=========================================================================================
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if !hasSearched {
+        if isLoading {
+            return 1
+        } else if !hasSearched {
             return 0
         } else if searchResults.count == 0 {
             return 1
@@ -336,7 +347,14 @@ extension SearchViewController: UITableViewDataSource {
     //=========================================================================================
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        if searchResults.count == 0 {
+        // Cell is loading
+        if isLoading {
+            let cell = tableView.dequeueReusableCellWithIdentifier(TableViewCellIdentifiers.loadingCell, forIndexPath: indexPath) as! UITableViewCell
+            let spinner = cell.viewWithTag(100) as! UIActivityIndicatorView
+            spinner.startAnimating()
+            
+            return cell
+        } else if searchResults.count == 0 {
             return tableView.dequeueReusableCellWithIdentifier(TableViewCellIdentifiers.nothingFoundCell, forIndexPath: indexPath) as! UITableViewCell
         } else {
             let cell = tableView.dequeueReusableCellWithIdentifier(TableViewCellIdentifiers.searchResultCell, forIndexPath: indexPath) as! SearchResultCell
@@ -373,7 +391,7 @@ extension SearchViewController: UITableViewDelegate {
     // Make sure you can only select rows with results
     //=========================================================================================
     func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
-        if searchResults.count == 0 {
+        if searchResults.count == 0 || isLoading {
             return nil
         } else {
             return indexPath

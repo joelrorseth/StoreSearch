@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D78AF011B686313009AB3B0 /* LoadingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D78AF001B686313009AB3B0 /* LoadingCell.xib */; };
 		5DAF82FE1B57495D007F8E7B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAF82FD1B57495D007F8E7B /* AppDelegate.swift */; };
 		5DAF83001B57495D007F8E7B /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAF82FF1B57495D007F8E7B /* SearchViewController.swift */; };
 		5DAF83031B57495D007F8E7B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DAF83011B57495D007F8E7B /* Main.storyboard */; };
@@ -30,6 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5D78AF001B686313009AB3B0 /* LoadingCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoadingCell.xib; sourceTree = "<group>"; };
 		5DAF82F81B57495D007F8E7B /* StoreSearch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoreSearch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DAF82FC1B57495D007F8E7B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5DAF82FD1B57495D007F8E7B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -94,6 +96,7 @@
 				5DAF83061B57495D007F8E7B /* LaunchScreen.xib */,
 				5DB5329F1B58799700D2E086 /* SearchResultCell.xib */,
 				5DB532A31B5883AB00D2E086 /* NothingFoundCell.xib */,
+				5D78AF001B686313009AB3B0 /* LoadingCell.xib */,
 				5DAF82FB1B57495D007F8E7B /* Supporting Files */,
 			);
 			path = StoreSearch;
@@ -206,6 +209,7 @@
 			files = (
 				5DAF83031B57495D007F8E7B /* Main.storyboard in Resources */,
 				5DAF83081B57495D007F8E7B /* LaunchScreen.xib in Resources */,
+				5D78AF011B686313009AB3B0 /* LoadingCell.xib in Resources */,
 				5DB532A01B58799700D2E086 /* SearchResultCell.xib in Resources */,
 				5DB532A41B5883AB00D2E086 /* NothingFoundCell.xib in Resources */,
 				5DAF83051B57495D007F8E7B /* Images.xcassets in Resources */,
