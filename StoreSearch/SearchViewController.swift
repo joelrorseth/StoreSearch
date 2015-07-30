@@ -73,33 +73,19 @@ class SearchViewController: UIViewController {
     }
     
     //=========================================================================================
-    //=========================================================================================
-    func performStoreRequestWithURL(url: NSURL) -> String? {
-        var error: NSError?
-        if let resultString = String(contentsOfURL: url, encoding: NSUTF8StringEncoding, error: &error) {
-            return resultString
-        } else if let error = error {
-            println("Download error: \(error)")
-        } else {
-            println("Unknown Download Error")
-        }
-        return nil
-    }
-    
-    //=========================================================================================
     // Use NSJSONSerialization to convert JSON search results to a dictionary
     //=========================================================================================
-    func parseJSON(jsonString: String) -> [String: AnyObject]? {
-        if let data = jsonString.dataUsingEncoding(NSUTF8StringEncoding) {
-            var error: NSError?
-            if let json = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(0), error: &error) as? [String: AnyObject] {
-                return json
-            } else if let error = error {
-                println("JSON Error: \(error)")
-            } else {
-                println("Unknown JSON Error")
-            }
+    func parseJSON(data: NSData) -> [String: AnyObject]? {
+        var error: NSError?
+        
+        if let json = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(0), error: &error) as? [String: AnyObject] {
+            return json
+        } else if let error = error {
+            println("JSON Error: \(error)")
+        } else {
+            println("Unknown JSON Error")
         }
+        
         return nil
     }
     
@@ -114,6 +100,7 @@ class SearchViewController: UIViewController {
     }
     
     //=========================================================================================
+    // Figure out which type of result is given then call it's parse method
     //=========================================================================================
     func parseDictionary(dictionary: [String: AnyObject]) -> [SearchResult] {
         // Create an array to store all of the results formed in this for loop
@@ -282,35 +269,49 @@ extension SearchViewController: UISearchBarDelegate {
             hasSearched = true
             searchResults = [SearchResult]()
             
-            // Get a reference to the queue
-            let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
+            let url = self.urlWithSearchText(searchBar.text)
+            let session = NSURLSession.sharedSession()
             
-            /* Dispatch a closure on the queue. All the code in the closure will be put on the 
-            queue and executed asynchronously in the background. After scheduling this closure, 
-            the main thread is free to continue (it is no longer blocked) */
-            dispatch_async(queue) {
+            // Create data task for sending HTTP GET requests to the server at 'url'
+            let dataTask = session.dataTaskWithURL(url, completionHandler: {
+                data, response, error in
                 
-                let url = self.urlWithSearchText(searchBar.text)
+                // Quck way to check if completionHandler is performing on main thread
+                println("On the main thread? " + (NSThread.currentThread().isMainThread ? "Yes" : "No"))
                 
-                if let jsonString = self.performStoreRequestWithURL(url) {
-                    if let dictionary = self.parseJSON(jsonString) {
+                if let error = error {
+                    println("Failure! \(error)")
+                } else if let httpResponse = response as? NSHTTPURLResponse {
+                    if httpResponse.statusCode == 200 {
                         
-                        self.searchResults = self.parseDictionary(dictionary)
-                        self.searchResults.sort(<)
-                        
-                        // UIKit requires UI code to be performed on main thread / queue
-                        dispatch_async(dispatch_get_main_queue()) {
-                            self.isLoading = false
-                            self.tableView.reloadData()
+                        if let dictionary = self.parseJSON(data) {
+                            self.searchResults = self.parseDictionary(dictionary)
+                            self.searchResults.sort(<)
+                            
+                            // UIKit code must be performed on main thread / queue
+                            dispatch_async(dispatch_get_main_queue()) {
+                                self.isLoading = false
+                                self.tableView.reloadData()
+                            }
+                            // Exit the closure if successful
+                            return
                         }
-                        return
+                    } else {
+                        println("Failure \(response)")
                     }
                 }
-                // UIAlertController must be performed using main thread / queue
+                
+                // Must be done on main thread
                 dispatch_async(dispatch_get_main_queue()) {
+                    self.hasSearched = false
+                    self.isLoading = false
+                    self.tableView.reloadData()
                     self.showNetworkError()
                 }
-            }
+            })
+            
+            // Send the request to the server (automatically on background thread)
+            dataTask.resume()
         }
     }
     
