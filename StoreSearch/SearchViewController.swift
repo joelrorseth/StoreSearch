@@ -13,17 +13,33 @@ class SearchViewController: UIViewController {
     struct TableViewCellIdentifiers {
         static let searchResultCell = "SearchResultCell"
         static let nothingFoundCell = "NothingFoundCell"
-        static let loadingCell = "Loading Cell"
+        static let loadingCell = "LoadingCell"
     }
-    
-    @IBOutlet weak var searchBar: UISearchBar!
-    @IBOutlet weak var tableView: UITableView!
     
     var searchResults = [SearchResult]()
     var hasSearched = false
     var isLoading = false
     var dataTask: NSURLSessionDataTask?
   
+    
+    
+    
+    
+    //*****************************************************************************************
+    //*************************************************************** MARK: - Interface Builder
+    //*****************************************************************************************
+    
+    @IBOutlet weak var searchBar: UISearchBar!
+    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
+    
+    //=========================================================================================
+    //=========================================================================================
+    @IBAction func segmentChanged(sender: UISegmentedControl) {
+        performSearch()
+    }
+    
+    
     
     
     //*****************************************************************************************
@@ -33,7 +49,7 @@ class SearchViewController: UIViewController {
     //=========================================================================================
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.contentInset = UIEdgeInsets(top: 64, left: 0, bottom: 0, right: 0)
+        tableView.contentInset = UIEdgeInsets(top: 108, left: 0, bottom: 0, right: 0)
         tableView.rowHeight = 80
         
         // Register the nib cell
@@ -65,10 +81,19 @@ class SearchViewController: UIViewController {
     //*********************************************************************** MARK: - Searching
     //*****************************************************************************************
     //=========================================================================================
+    // Form the requested url based on search bar input
     //=========================================================================================
-    func urlWithSearchText(searchText: String) -> NSURL {
+    func urlWithSearchText(searchText: String, category: Int) -> NSURL {
+        var entityName: String
+        switch category {
+        case 1: entityName = "musicTrack"
+        case 2: entityName = "software"
+        case 3: entityName = "ebook"
+        default: entityName = ""
+        }
+        
         let escapedSearchText = searchText.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
-        let urlString = String(format: "http://itunes.apple.com/search?term=%@", escapedSearchText)
+        let urlString = String(format: "http://itunes.apple.com/search?term=%@&limit=200&entity=%@", escapedSearchText, entityName)
         let url = NSURL(string: urlString) // Failable initializer
         return url!
     }
@@ -260,7 +285,7 @@ class SearchViewController: UIViewController {
 extension SearchViewController: UISearchBarDelegate {
     //=========================================================================================
     //=========================================================================================
-    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+    func performSearch() {
         if !searchBar.text.isEmpty {
             searchBar.resignFirstResponder()
             
@@ -271,7 +296,7 @@ extension SearchViewController: UISearchBarDelegate {
             hasSearched = true
             searchResults = [SearchResult]()
             
-            let url = self.urlWithSearchText(searchBar.text)
+            let url = self.urlWithSearchText(searchBar.text, category: segmentedControl.selectedSegmentIndex)
             let session = NSURLSession.sharedSession()
             
             // Create data task for sending HTTP GET requests to the server at 'url'
@@ -317,6 +342,12 @@ extension SearchViewController: UISearchBarDelegate {
             // Send the request to the server (automatically on background thread)
             dataTask?.resume()
         }
+    }
+    
+    //=========================================================================================
+    //=========================================================================================
+    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        performSearch()
     }
     
     //=========================================================================================

@@ -12,7 +12,6 @@
 		5DAF83001B57495D007F8E7B /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAF82FF1B57495D007F8E7B /* SearchViewController.swift */; };
 		5DAF83031B57495D007F8E7B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DAF83011B57495D007F8E7B /* Main.storyboard */; };
 		5DAF83051B57495D007F8E7B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5DAF83041B57495D007F8E7B /* Images.xcassets */; };
-		5DAF83081B57495D007F8E7B /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5DAF83061B57495D007F8E7B /* LaunchScreen.xib */; };
 		5DAF83141B57495D007F8E7B /* StoreSearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAF83131B57495D007F8E7B /* StoreSearchTests.swift */; };
 		5DB5329E1B57FE2100D2E086 /* SearchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB5329D1B57FE2100D2E086 /* SearchResult.swift */; };
 		5DB532A01B58799700D2E086 /* SearchResultCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5DB5329F1B58799700D2E086 /* SearchResultCell.xib */; };
@@ -38,7 +37,6 @@
 		5DAF82FF1B57495D007F8E7B /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		5DAF83021B57495D007F8E7B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5DAF83041B57495D007F8E7B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		5DAF83071B57495D007F8E7B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		5DAF830D1B57495D007F8E7B /* StoreSearchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StoreSearchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DAF83121B57495D007F8E7B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5DAF83131B57495D007F8E7B /* StoreSearchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSearchTests.swift; sourceTree = "<group>"; };
@@ -93,7 +91,6 @@
 				5DB532A11B587FED00D2E086 /* SearchResultCell.swift */,
 				5DAF83011B57495D007F8E7B /* Main.storyboard */,
 				5DAF83041B57495D007F8E7B /* Images.xcassets */,
-				5DAF83061B57495D007F8E7B /* LaunchScreen.xib */,
 				5DB5329F1B58799700D2E086 /* SearchResultCell.xib */,
 				5DB532A31B5883AB00D2E086 /* NothingFoundCell.xib */,
 				5D78AF001B686313009AB3B0 /* LoadingCell.xib */,
@@ -208,7 +205,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5DAF83031B57495D007F8E7B /* Main.storyboard in Resources */,
-				5DAF83081B57495D007F8E7B /* LaunchScreen.xib in Resources */,
 				5D78AF011B686313009AB3B0 /* LoadingCell.xib in Resources */,
 				5DB532A01B58799700D2E086 /* SearchResultCell.xib in Resources */,
 				5DB532A41B5883AB00D2E086 /* NothingFoundCell.xib in Resources */,
@@ -262,14 +258,6 @@
 				5DAF83021B57495D007F8E7B /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		5DAF83061B57495D007F8E7B /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5DAF83071B57495D007F8E7B /* Base */,
-			);
-			name = LaunchScreen.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
