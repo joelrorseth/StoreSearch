@@ -110,6 +110,8 @@ class DetailViewController: UIViewController {
             priceText = ""
         }
         
+        priceButton.setTitle(priceText, forState: .Normal)
+        
         if let url = NSURL(string: searchResult.artworkURL100) {
             downloadTask = artworkImageView.loadImageWithURL(url)
         }
