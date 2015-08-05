@@ -68,6 +68,7 @@ class DetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.tintColor = UIColor(red: 20/255, green: 160/255, blue: 160/255, alpha: 1)
+        view.backgroundColor = UIColor.clearColor()
         popupView.layer.cornerRadius = 10
         
         // Create the gesture recognizer that listens to taps in this view controller
@@ -110,7 +111,7 @@ class DetailViewController: UIViewController {
             priceText = ""
         }
         
-        priceButton.setTitle(priceText, forState: .Normal)
+        priceButton.setTitle(priceText, forState: .Normal) 
         
         if let url = NSURL(string: searchResult.artworkURL100) {
             downloadTask = artworkImageView.loadImageWithURL(url)
@@ -132,6 +133,18 @@ extension DetailViewController: UIViewControllerTransitioningDelegate {
     func presentationControllerForPresentedViewController(presented: UIViewController, presentingViewController presenting: UIViewController!, sourceViewController source: UIViewController) -> UIPresentationController? {
         // Tell UIKit to use DimmingPresentationController class to perform transition to DetailViewController
         return DimmingPresentationController(presentedViewController: presented, presentingViewController: presenting)
+    }
+    
+    //=========================================================================================
+    //=========================================================================================
+    func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        return BounceAnimationController()
+    }
+    
+    //=========================================================================================
+    //=========================================================================================
+    func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        return SlideOutAnimationController()
     }
 }
 
