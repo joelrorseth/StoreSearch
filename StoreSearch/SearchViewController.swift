@@ -20,6 +20,7 @@ class SearchViewController: UIViewController {
     var hasSearched = false
     var isLoading = false
     var dataTask: NSURLSessionDataTask?
+    var landscapeViewController: LandscapeViewController?
   
     
     
@@ -74,6 +75,22 @@ class SearchViewController: UIViewController {
     }
     
     //=========================================================================================
+    // Method is invoked any time trait collection changes
+    //=========================================================================================
+    override func willTransitionToTraitCollection(newCollection: UITraitCollection, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+        super.willTransitionToTraitCollection(newCollection, withTransitionCoordinator: coordinator)
+        
+        switch newCollection.verticalSizeClass {
+            // Device is in landscape
+        case .Compact:
+            showLandscapeViewWithCoordinator(coordinator)
+            // Device is back in portrait
+        case .Regular, .Unspecified:
+            hideLandscapeViewWithCoordinator(coordinator)
+        }
+    }
+    
+    //=========================================================================================
     //=========================================================================================
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "ShowDetail" {
@@ -81,6 +98,60 @@ class SearchViewController: UIViewController {
             let indexPath = sender as! NSIndexPath
             let searchResult = searchResults[indexPath.row]
             detailViewController.searchResult = searchResult
+        }
+    }
+    
+    
+    
+    
+    
+    
+    //*****************************************************************************************
+    //***************************************************************** MARK: - Device Rotation
+    //*****************************************************************************************
+    //=========================================================================================
+    //=========================================================================================
+    func showLandscapeViewWithCoordinator(coordinator: UIViewControllerTransitionCoordinator) {
+        precondition(landscapeViewController == nil)
+        
+        // Storyboard ID needs to be set to find view controller
+        landscapeViewController = storyboard!.instantiateViewControllerWithIdentifier("LandscapeViewController") as? LandscapeViewController
+        
+        if let controller = landscapeViewController {
+            controller.view.frame = view.bounds
+            controller.view.alpha = 0
+            
+            // Call these methods to add a child view controller
+            view.addSubview(controller.view)
+            addChildViewController(controller)
+            
+            coordinator.animateAlongsideTransition({ _ in
+                controller.view.alpha = 1
+                self.searchBar.resignFirstResponder()
+                
+                if self.presentedViewController != nil {
+                    self.dismissViewControllerAnimated(true, completion: nil)
+                }
+                },
+                completion: { _ in
+                    controller.didMoveToParentViewController(self)
+            })
+        }
+    }
+    
+    //=========================================================================================
+    //=========================================================================================
+    func hideLandscapeViewWithCoordinator(coordinator: UIViewControllerTransitionCoordinator) {
+        if let controller = landscapeViewController {
+            controller.willMoveToParentViewController(nil)
+            
+            coordinator.animateAlongsideTransition({ _ in
+                controller.view.alpha = 0
+                }, completion: { _ in
+                    controller.view.removeFromSuperview()
+                    controller.removeFromParentViewController()
+                    self.landscapeViewController = nil
+            })
         }
     }
     

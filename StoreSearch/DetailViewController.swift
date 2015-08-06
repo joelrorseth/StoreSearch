@@ -10,6 +10,15 @@ import UIKit
 
 class DetailViewController: UIViewController {
     
+    var searchResult: SearchResult!
+    var downloadTask: NSURLSessionDownloadTask?
+    var dismissAnimationStyle = AnimationStyle.Fade
+    
+    enum AnimationStyle {
+        case Slide
+        case Fade
+    }
+    
     //*****************************************************************************************
     //*************************************************************** MARK: - Interface Builder
     //*****************************************************************************************
@@ -24,6 +33,7 @@ class DetailViewController: UIViewController {
     //=========================================================================================
     //=========================================================================================
     @IBAction func close() {
+        dismissAnimationStyle = .Slide
         dismissViewControllerAnimated(true, completion: nil)
     }
     
@@ -42,10 +52,6 @@ class DetailViewController: UIViewController {
     //*****************************************************************************************
     //***************************************************************** MARK: - View Controller
     //*****************************************************************************************
-    
-    var searchResult: SearchResult!
-    var downloadTask: NSURLSessionDownloadTask?
-    
     //=========================================================================================
     //=========================================================================================
     required init(coder aDecoder: NSCoder) {
@@ -144,7 +150,10 @@ extension DetailViewController: UIViewControllerTransitioningDelegate {
     //=========================================================================================
     //=========================================================================================
     func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return SlideOutAnimationController()
+        switch dismissAnimationStyle {
+        case .Slide: return SlideOutAnimationController()
+        case .Fade: return FadeOutAnimationController()
+        }
     }
 }
 
