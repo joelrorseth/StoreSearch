@@ -10,12 +10,21 @@ import UIKit
 
 class LandscapeViewController: UIViewController {
     
-    var searchResults = [SearchResult]()
+    var search: Search!
     private var firstTime = true
+    private var downloadTasks = [NSURLSessionDownloadTask]()
     
+    
+    
+    
+    //*****************************************************************************************
+    //*************************************************************** MARK: - Interface Builder
+    //*****************************************************************************************
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var pageControl: UIPageControl!
     
+    //=========================================================================================
+    //=========================================================================================
     @IBAction func pageChanged(sender: UIPageControl) {
         UIView.animateWithDuration(
             0.3,
@@ -27,7 +36,12 @@ class LandscapeViewController: UIViewController {
                 y: 0)},
             completion: nil)
     }
-
+    
+    
+    
+    //*****************************************************************************************
+    //***************************************************************** MARK: - View Controller
+    //*****************************************************************************************
     //=========================================================================================
     //=========================================================================================
     override func viewDidLoad() {
@@ -62,10 +76,26 @@ class LandscapeViewController: UIViewController {
         
         if firstTime {
             firstTime = false
-            tileButtons(searchResults)
+            tileButtons(search.searchResults)
         }
     }
     
+    //=========================================================================================
+    //=========================================================================================
+    deinit {
+        println("deinit \(self)")
+        
+        // Cancel any operations still in the way
+        for task in downloadTasks {
+            task.cancel()
+        }
+    }
+    
+    
+    
+    //*****************************************************************************************
+    //******************************************************************** MARK: - Image Layout
+    //*****************************************************************************************
     //=========================================================================================
     //=========================================================================================
     private func tileButtons(searchResults: [SearchResult]) {
@@ -110,9 +140,9 @@ class LandscapeViewController: UIViewController {
         var x = marginX
         
         for (index, searchResult) in enumerate(searchResults) {
-            let button = UIButton.buttonWithType(.System) as! UIButton
-            button.backgroundColor = UIColor.whiteColor()
-            button.setTitle("\(index)", forState: .Normal)
+            let button = UIButton.buttonWithType(.Custom) as! UIButton
+            button.setBackgroundImage(UIImage(named: "LandscapeButton"), forState: .Normal)
+            downloadImageForSearchResult(searchResult, andPlaceOnButton: button)
             
             // Making a button manually so you must set its frame
             button.frame = CGRect(
@@ -152,8 +182,39 @@ class LandscapeViewController: UIViewController {
         pageControl.numberOfPages = numPages
         pageControl.currentPage = 0
     }
+    
+    //=========================================================================================
+    //=========================================================================================
+    private func downloadImageForSearchResult(searchResult: SearchResult, andPlaceOnButton button: UIButton) {
+        if let url = NSURL(string: searchResult.artworkURL60) {
+            let session = NSURLSession.sharedSession()
+            
+            // Capture button with a weak reference to avoid ownership cycles
+            let downloadTask = session.downloadTaskWithURL(url, completionHandler: { [weak button] url, response, error in
+                
+                if error == nil && url != nil {
+                    if let data = NSData(contentsOfURL: url) {
+                        if let image = UIImage(data: data) {
+                            dispatch_async(dispatch_get_main_queue()) {
+                                if let button = button {
+                                    button.setImage(image, forState: .Normal)
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+            
+            downloadTask.resume()
+            downloadTasks.append(downloadTask)
+        }
+    }
 }
 
+
+//*****************************************************************************************
+//************************************************************ MARK: - UIScrollViewDelegate
+//*****************************************************************************************
 extension LandscapeViewController: UIScrollViewDelegate {
     //=========================================================================================
     //=========================================================================================
