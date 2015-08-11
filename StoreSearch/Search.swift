@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 // SearchComplete is a closure that takes Bool parameter and returns no value
 typealias SearchComplete = (Bool) -> Void
@@ -46,6 +47,7 @@ class Search {
         if !text.isEmpty {
             dataTask?.cancel() // Reset if needed
             
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = true
             state = .Loading
             
             let url = urlWithSearchText(text, category: category)
@@ -82,6 +84,8 @@ class Search {
                 }
                 
                 dispatch_async(dispatch_get_main_queue()) {
+                    UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+                    
                     // Pass true or false to completion when it is called here
                     completion(success)
                 }
